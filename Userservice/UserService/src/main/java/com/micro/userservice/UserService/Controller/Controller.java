@@ -1,5 +1,6 @@
 package com.micro.userservice.UserService;
 
+import com.micro.userservice.UserService.Entity.Rating;
 import com.micro.userservice.UserService.Entity.User;
 import com.micro.userservice.UserService.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,13 @@ public class Controller {
     public ResponseEntity<List<User>> getAllUsers(){
         List<User> allUsers = userService.getAllUsers();
         return ResponseEntity.ok(allUsers);
+    }
+
+    //External Apis
+
+    @PostMapping("/{id}/rating")
+    public ResponseEntity<Rating> createRating(@PathVariable String id,@RequestBody Rating rating){
+     Rating rating1 =  userService.createRating(id, rating) ;
+     return ResponseEntity.ok(rating1);
     }
 }

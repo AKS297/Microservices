@@ -3,6 +3,7 @@ package com.micro.userservice.UserService.UserServiceImpl;
 import com.micro.userservice.UserService.Entity.Hotel;
 import com.micro.userservice.UserService.Entity.Rating;
 import com.micro.userservice.UserService.Entity.User;
+import com.micro.userservice.UserService.External.Service.RatingService;
 import com.micro.userservice.UserService.Repository.UserRepository;
 import com.micro.userservice.UserService.Service.UserService;
 import org.slf4j.Logger;
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private RatingService ratingService;
 
 
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -51,7 +55,6 @@ public class UserServiceImpl implements UserService {
         logger.info("{} ",ratings);
 
         //   ResponseEntity<Hotel> hotelEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotel/fetchHotel/" +rating.getHotelId(), Hotel.class);
-
        List<Rating> ratingList = ratings.stream().map( rating -> {
            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotel/fetchHotel/" +rating.getHotelId(), Hotel.class);
            Hotel hotel = forEntity.getBody();
@@ -66,5 +69,15 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
        List<User> allUsers = userRepository.findAll();
         return allUsers;
+    }
+
+    @Override
+    public Rating createRating(String id,Rating ratingbody) {
+      User user = userRepository.findById(id).orElseThrow();
+      Rating rating = ratingService.createRating(ratingbody);
+      rating.setUserId(id);
+
+
+        return rating;
     }
 }
